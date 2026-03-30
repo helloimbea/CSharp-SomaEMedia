@@ -9,9 +9,11 @@ List<double> numeros = new List<double>();
 
 while (true)
 {
-    s
-    string qtd = sm.QuantidadeInput(numeros);
-    sm.Conversao(qtd);
+    string qtd = sm.QuantidadeInput();
+
+    if (!sm.Conversao(qtd))
+        continue; // volta pro começo do loop
+
     sm.MontarLista(numeros, sm.Quantidade);
     sm.CalcularSoma(numeros);
     sm.Resultado = sm.CalcularMedia(sm.Soma, sm.Quantidade);
@@ -23,39 +25,35 @@ public class SomaEMedia
 {
     public int Quantidade { get; set; }
     public double Soma { get; set; }
-    public string Media { get; set; }
     public double Resultado { get; set; }
 
-    public string QuantidadeInput(List<double> lista)
+    public string QuantidadeInput()
     {
         WriteLine("Quantos números deseja calcular a média? (3 a 10)");
         Write("Quantidade: ");
         string quantidade = ReadLine();
         return quantidade;
     } 
-        public void Conversao(string quantidade, List<double> lista)
-    {
-        if (!int.TryParse(quantidade, out int qtd))
-        {
-            MensagemDeErro();
-            return;
-        }
 
-        Quantidade = qtd;
-        Verificacao(qtd, lista);
-        
+    public bool Conversao(string quantidade)
+{
+    if (!int.TryParse(quantidade, out int qtd))
+    {
+        MensagemDeErro();
+        return false;
     }
 
-    public void Verificacao(int quantidade, List<double> lista)
+    if (qtd < 3 || qtd > 10)
     {
-        if (quantidade < 3 || quantidade > 10)
-        {
-            WriteLine("Erro, digite um número entre 3 e 10");
-            WriteLine("Pressione ENTER para voltar ao menu...");
-            ReadLine();
-        }
-       
+        MensagemDeErro();
+        return false;
     }
+
+    Quantidade = qtd;
+    return true;
+}
+
+
 
     public void MensagemDeErro()
     {
@@ -68,9 +66,12 @@ public class SomaEMedia
     {
         
         WriteLine("Média: " +resultado.ToString("F2"));
-        WriteLine("Pressione ENTER para sair");
-        ReadLine();
-        Sair();
+        WriteLine("Pressione ENTER para continuar ou 's' para sair");
+        string resposta = ReadLine();
+        if(resposta == "s")
+        {
+            Sair();
+        }
        
         
     }
@@ -86,8 +87,7 @@ public class SomaEMedia
         {
             for(int i = 0; i < quantidade; i++)
         {
-            Write("Digite um número: ");
-
+            Write($"Digite o número {i + 1}: ");
             if (double.TryParse(ReadLine(), out double n))
             {
                 lista.Add(n);
